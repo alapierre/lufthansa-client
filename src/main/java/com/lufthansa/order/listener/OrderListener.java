@@ -3,8 +3,11 @@
  */
 package com.lufthansa.order.listener;
 
+import com.lufthansa.order.repozytory.OrderItemRepository;
+import com.lufthansa.order.repozytory.OrderReposytory;
 import com.lufthansa.order.util.MessageConverter;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +23,16 @@ import javax.jms.Message;
 @Component
 public class OrderListener {
 
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private OrderReposytory orderReposytory;
+
     @JmsListener(destination = "test.queue")
     public void processMessage(Message message) {
 
         System.out.println("wiadomość !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-        System.out.println(message.getClass());
 
         if(message instanceof BytesMessage) {
             System.out.println("wiadomość bajtowa");
@@ -37,6 +44,12 @@ public class OrderListener {
             Order order = serializer.fromString(str);
 
             System.out.println(order.getOrderId());
+
+            com.lufthansa.order.model.Order dbo = new com.lufthansa.order.model.Order();
+
+            dbo.setOrderNumber(order.getOrderId());
+
+            orderReposytory.save(dbo);
 
         }
 
