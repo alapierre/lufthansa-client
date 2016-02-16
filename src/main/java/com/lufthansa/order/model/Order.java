@@ -3,10 +3,15 @@
  */
 package com.lufthansa.order.model;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -24,8 +29,14 @@ public class Order {
     @Size(max = 128)
     private String orderNumber;
 
+    @OrderBy("id")
+    @OneToMany
+    @JoinColumn(name = "order_id")
+    private Set<OrderItem> orders;
+
     public int getId() {
         return id;
+
     }
 
     public void setId(int id) {
